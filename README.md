@@ -12,8 +12,8 @@ Before you begin, ensure you have the following installed:
 - **[Docker](https://www.docker.com/get-started)**: To build and push Docker images to Google Container Registry.
 - **gcloud CLI authenticated**: Ensure your Google Cloud account is authenticated using:
   
-  ```bash
-  gcloud auth login
+```bash
+gcloud auth login
 
 .
 ├── main.tf                 # Terraform main configuration file
@@ -64,7 +64,8 @@ Running the Shell Script
 Make sure you have set up the necessary environment variables as described in Step 1.
 Run the shell script to deploy the infrastructure:
 ```
-    bash deploy.sh
+bash deploy.sh
+
 The script will:
 
 Authenticate with Google Cloud using gcloud auth login.
