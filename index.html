@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Web App</title>
+</head>
+<body>
+    <h1>Welcome to my Simple Web App</h1>
+
+    <h2>Create User</h2>
+    <form id="createUserForm">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" required><br>
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email" required><br><br>
+        <button type="submit">Create User</button>
+    </form>
+
+    <h2>Users List</h2>
+    <ul id="usersList"></ul>
+
+    <script>
+        document.getElementById('createUserForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            
+            fetch('https://your-backend-url.com/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, email })
+            }).then(response => response.json())
+              .then(data => console.log(data));
+        });
+
+        function loadUsers() {
+            fetch('https://your-backend-url.com/users')
+                .then(response => response.json())
+                .then(users => {
+                    const usersList = document.getElementById('usersList');
+                    usersList.innerHTML = '';
+                    users.forEach(user => {
+                        const li = document.createElement('li');
+                        li.textContent = `${user.name} (${user.email})`;
+                        usersList.appendChild(li);
+                    });
+                });
+        }
+
+        loadUsers();
+    </script>
+</body>
+</html>
