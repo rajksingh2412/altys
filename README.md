@@ -12,7 +12,7 @@ Before you begin, ensure you have the following installed:
 - **[Docker](https://www.docker.com/get-started)**: To build and push Docker images to Google Container Registry.
 - **gcloud CLI authenticated**: Ensure your Google Cloud account is authenticated using:
   
-```bash
+  ```bash
 gcloud auth login
 
 .
