@@ -12,15 +12,14 @@ Before you begin, ensure you have the following installed:
 - **[Docker](https://www.docker.com/get-started)**: To build and push Docker images to Google Container Registry.
 - **gcloud CLI authenticated**: Ensure your Google Cloud account is authenticated using:
   
-  ```bash
-gcloud auth login
+  ```bash  gcloud auth login
 
 .
 ├── main.tf                 # Terraform main configuration file
 ├── variables.tf            # Terraform variable definitions
 ├── outputs.tf              # Terraform output values
 ├── terraform.tfvars        # Terraform variable file (can be dynamically created via shell)
-└── deploy.sh               # Shell script to automate the process
+shell.sh                  # Shell script to automate the process
 Setup and Configuration
 Step 1: Configure Environment Variables
 Before running the shell script, set up your GCP project and resource configurations inside the deploy.sh script.
