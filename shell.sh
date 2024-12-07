@@ -4,29 +4,17 @@
 set -e
 
 # GCP Project ID and other environment variables
-<<<<<<< HEAD
-PROJECT_ID="flutter-sl-poc-21aa3"
-=======
 PROJECT_ID="delta-wonder-443918-h2"
->>>>>>> 4581c45 (updated working terraform and shell)
 REGION="us-central1"
 DB_HOST="my-sql-instance.us-central1.c.project-id.internal"
 DB_USER="root"
 DB_PASSWORD="your-password"
-<<<<<<< HEAD
-DB_NAME="my-database"
-
-# Step 1: Authenticate with Google Cloud
-echo "Authenticating with Google Cloud..."
-# gcloud auth login
-=======
 DB_NAME="users"
 CLOUD_STORAGE_BUCKET_NAME="my-frontend-bucket"
 
 # Step 1: Authenticate with Google Cloud
 echo "Authenticating with Google Cloud..."
 gcloud auth activate-service-account --key-file="./delta-wonder-443918-h2-d14114f4e354.json"
->>>>>>> 4581c45 (updated working terraform and shell)
 gcloud config set project $PROJECT_ID
 gcloud config set compute/region $REGION
 
