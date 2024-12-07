@@ -30,13 +30,12 @@ db_name    = "$DB_NAME"
 EOL
 
 ### create gcr repo 
-#gcloud artifacts repositories create my-backend-repo --repository-format=docker --location=us-central1
+gcloud artifacts repositories create my-backend-repo --repository-format=docker --location=us-central1
 # Step 3: Build the Backend Docker Image
 echo "Building Docker image for the backend..."
 docker buildx  build --platform linux/amd64 -t gcr.io/$PROJECT_ID/my-backend-image -f backend/Dockerfile .
 
 gcloud auth configure-docker 
-# # us-central1-docker.pkg.dev
 # # Step 4: Push the Docker Image to Google Container Registry
 echo "Pushing Docker image to Google Container Registry..."
 docker push gcr.io/$PROJECT_ID/my-backend-image

@@ -5,9 +5,20 @@ The frontend is deployed on static gcs bucket.
 
 Steps to execute:
 1. create a file with name service-account.json with the access to above resources.
-2. command to run
+2. Update these variable in deploy.sh.
 ```
-  bash shell.sh
+# GCP Project ID and other environment variables
+PROJECT_ID="robust-muse-443819-r2"
+REGION="us-central1"
+DB_HOST="my-sql-instance.us-central1.c.project-id.internal"
+DB_USER="root"
+DB_PASSWORD="your-password"
+DB_NAME="users"
+CLOUD_STORAGE_BUCKET_NAME="frontend-bucket-xyztr"
+```
+3. command to run
+```
+  bash deploy.sh
 ```
 This will create image and deploy
 backend: App engine
