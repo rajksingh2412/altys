@@ -57,12 +57,15 @@ resource "google_sql_database_instance" "mysql_instance" {
 resource "google_sql_database" "database1" {
   name     = "users"
   instance = google_sql_database_instance.mysql_instance.name
+  depends_on = [google_sql_database_instance.mysql_instance]
 }
 
 resource "google_sql_user" "mysql_user" {
   name     = var.db_user
   instance = google_sql_database_instance.mysql_instance.name
   password = var.db_password
+
+  depends_on = [google_sql_database_instance.mysql_instance]
 }
 
 provider "mysql" {
@@ -70,11 +73,6 @@ provider "mysql" {
   username = google_sql_user.mysql_user.name
   password = google_sql_user.mysql_user.password
 
-}
-
-# Creating a table
-resource "mysql_database" "database1" {
-  name = google_sql_database.database1.name
 }
 
 resource "null_resource" "create_table" {
