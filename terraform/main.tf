@@ -2,6 +2,16 @@
 provider "google" {
   project = var.project_id
   region  = var.region
+  credentials = file("../delta-wonder-443918-h2-d14114f4e354.json")
+}
+
+terraform {
+  required_providers {
+    mysql = {
+      source  = "terraform-providers/mysql"
+      version = "~> 1.9"  # Adjust based on the version you're using
+    }
+  }
 }
 
 # Create a Virtual Private Cloud (VPC)
@@ -44,6 +54,45 @@ resource "google_sql_database_instance" "mysql_instance" {
   }
 }
 
+resource "google_sql_database" "database1" {
+  name     = "users"
+  instance = google_sql_database_instance.mysql_instance.name
+}
+
+resource "google_sql_user" "mysql_user" {
+  name     = var.db_user
+  instance = google_sql_database_instance.mysql_instance.name
+  password = var.db_password
+}
+
+provider "mysql" {
+  endpoint = google_sql_database_instance.mysql_instance.ip_address[0].ip_address
+  username = google_sql_user.mysql_user.name
+  password = google_sql_user.mysql_user.password
+  database = google_sql_database.database1.name
+}
+
+# Creating a table
+resource "mysql_database" "database1" {
+  name = google_sql_database.database1.name
+}
+
+resource "mysql_table" "users_table" {
+  name      = "users"
+  database  = mysql_database.database1.name
+  provider  = mysql
+
+  columns = {
+    id    = "INT AUTO_INCREMENT PRIMARY KEY"
+    name  = "VARCHAR(255)"
+    email = "VARCHAR(255)"
+  }
+}
+
+
+
+
+
 # Cloud Storage bucket for frontend
 resource "google_storage_bucket" "frontend_bucket" {
   name     = "my-frontend-bucket"
@@ -53,7 +102,28 @@ resource "google_storage_bucket" "frontend_bucket" {
     main_page_suffix = "index.html"
     not_found_page   = "404.html"
   }
+  cors {
+  origin          = ["https://my-frontend-bucket.storage.googleapis.com"]  # Replace with your frontend URL
+  response_header = ["Content-Type", "Authorization"]
+  method          = ["GET", "POST", "PUT", "DELETE"]
+  max_age_seconds = 3600
+  }
 }
+
+
+resource "google_storage_bucket_object" "index" {
+  name   = "index.html"
+  bucket = google_storage_bucket.frontend_bucket.name
+  source = "./../index.html"  # Path to your local file
+}
+
+
+resource "google_storage_bucket_iam_member" "public_read" {
+  bucket = google_storage_bucket.frontend_bucket.name
+  role   = "roles/storage.objectViewer"
+  member = "allUsers"  # Grants read access to everyone
+}
+
 
 # Firewall rules for allowing HTTP traffic
 resource "google_compute_firewall" "allow_http" {
@@ -67,6 +137,12 @@ resource "google_compute_firewall" "allow_http" {
   source_ranges = ["0.0.0.0/0"]
   target_tags = ["http-server"]
 }
+
+
+
+
+
+
 
 # App Engine service for backend
 resource "google_app_engine_application" "default" {
@@ -85,7 +161,7 @@ resource "google_app_engine_flexible_app_version" "backend_app" {
 
   # Environment variables for the application
   env_variables = {
-    DB_HOST     = var.db_host
+    DB_HOST     = google_sql_database_instance.mysql_instance.ip_address[0].ip_address
     DB_USER     = var.db_user
     DB_PASSWORD = var.db_password
     DB_NAME     = var.db_name
@@ -111,12 +187,12 @@ resource "google_app_engine_flexible_app_version" "backend_app" {
 }
 
 # Artifact Registry repository for Docker images
-resource "google_artifact_registry_repository" "my_backend_repo" {
-  repository_id = "my-backend-repo"
-  location      = "us-central1"
-  format        = "DOCKER"
-  project       = var.project_id
-}
+# resource "google_artifact_registry_repository" "my_backend_repo" {
+#   repository_id = "my-backend-repo"
+#   location      = "us-central1"
+#   format        = "DOCKER"
+#   project       = var.project_id
+# }
 
 output "frontend_url" {
   value = google_storage_bucket.frontend_bucket.website[0].main_page_suffix

@@ -1,8 +1,13 @@
 from flask import Flask, request, jsonify
 import mysql.connector
 import os
+from flask_cors import CORS
 
 app = Flask(__name__)
+
+
+# Enable CORS for the frontend URL
+CORS(app, origins=["https://my-frontend-bucket.storage.googleapis.com"])
 
 # Connect to MySQL Database
 def get_db_connection():

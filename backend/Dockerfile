@@ -1,5 +1,5 @@
 # Use the official Python image from Docker Hub
-FROM python:3.9-slim
+FROM  python:3.9-slim
 
 # Set the working directory
 WORKDIR /app
@@ -9,7 +9,7 @@ COPY backend/requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the application files
-COPY . /app/
+COPY backend/. /app/
 
 # Expose port
 EXPOSE 8080

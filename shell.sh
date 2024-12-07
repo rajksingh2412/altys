@@ -4,16 +4,29 @@
 set -e
 
 # GCP Project ID and other environment variables
+<<<<<<< HEAD
 PROJECT_ID="flutter-sl-poc-21aa3"
+=======
+PROJECT_ID="delta-wonder-443918-h2"
+>>>>>>> 4581c45 (updated working terraform and shell)
 REGION="us-central1"
 DB_HOST="my-sql-instance.us-central1.c.project-id.internal"
 DB_USER="root"
 DB_PASSWORD="your-password"
+<<<<<<< HEAD
 DB_NAME="my-database"
 
 # Step 1: Authenticate with Google Cloud
 echo "Authenticating with Google Cloud..."
 # gcloud auth login
+=======
+DB_NAME="users"
+CLOUD_STORAGE_BUCKET_NAME="my-frontend-bucket"
+
+# Step 1: Authenticate with Google Cloud
+echo "Authenticating with Google Cloud..."
+gcloud auth activate-service-account --key-file="./delta-wonder-443918-h2-d14114f4e354.json"
+>>>>>>> 4581c45 (updated working terraform and shell)
 gcloud config set project $PROJECT_ID
 gcloud config set compute/region $REGION
 
@@ -31,12 +44,13 @@ EOL
 ### create gcr repo 
 # gcloud artifacts repositories create my-backend-repo --repository-format=docker --location=us-central1
 # Step 3: Build the Backend Docker Image
-echo "Building Docker image for the backend..."
-# docker build -t gcr.io/$PROJECT_ID/my-backend-image -f backend/Dockerfile .
+# echo "Building Docker image for the backend..."
+# docker buildx  build --platform linux/amd64 -t gcr.io/$PROJECT_ID/my-backend-image -f backend/Dockerfile .
 
-gcloud auth configure-docker us-central1-docker.pkg.dev
-# Step 4: Push the Docker Image to Google Container Registry
-echo "Pushing Docker image to Google Container Registry..."
+# gcloud auth configure-docker 
+# # us-central1-docker.pkg.dev
+# # Step 4: Push the Docker Image to Google Container Registry
+# echo "Pushing Docker image to Google Container Registry..."
 # docker push gcr.io/$PROJECT_ID/my-backend-image
 
 # Step 5: Deploy the Backend to Google App Engine
@@ -49,21 +63,25 @@ terraform init
 
 echo "Applying Terraform configuration..."
 terraform plan -var-file="../test.tfvars"
-# terraform apply -var-file="test.tfvars"
+terraform apply -var-file="../test.tfvars"
 
+
+BACKEND_URL=$(terraform output -raw backend_url)
+cd ..
+sed -i '' "s|BACKEND_URL_PLACEHOLDER|$BACKEND_URL|g" index.html
 # # Step 6: Deploy the Frontend to Google Cloud Storage
-# echo "Deploying frontend to Google Cloud Storage..."
+echo "Deploying frontend to Google Cloud Storage..."
 
-# # Upload frontend files to the bucket (adjust the path to your actual index.html)
-# gsutil cp index.html gs://$CLOUD_STORAGE_BUCKET_NAME
+# Upload frontend files to the bucket (adjust the path to your actual index.html)
+gsutil cp index.html gs://$CLOUD_STORAGE_BUCKET_NAME/index.html
 
-# # Step 7: Output the deployed URLs
-# echo "Deployment complete!"
+# Step 7: Output the deployed URLs
+echo "Deployment complete!"
 
-# # Output Frontend URL
-# FRONTEND_URL="http://$CLOUD_STORAGE_BUCKET_NAME.storage.googleapis.com/index.html"
-# echo "Frontend URL: $FRONTEND_URL"
+# Output Frontend URL
+FRONTEND_URL="http://$CLOUD_STORAGE_BUCKET_NAME.storage.googleapis.com/index.html"
+echo "Frontend URL: $FRONTEND_URL"
 
-# # Output Backend URL (App Engine URL)
-# BACKEND_URL="https://$PROJECT_ID.appspot.com"
-# echo "Backend URL: $BACKEND_URL"
+# Output Backend URL (App Engine URL)
+BACKEND_URL="https://$PROJECT_ID.appspot.com"
+echo "Backend URL: $BACKEND_URL"
