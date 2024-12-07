@@ -16,5 +16,5 @@ db : mysql
 
 
 LINK:
-frontend: http://frontend-bucket-xyztr.storage.googleapis.com/index.html
-backend: https://robust-muse-443819-r2.uc.r.appspot.com/users
+1. frontend: http://frontend-bucket-xyztr.storage.googleapis.com/index.html
+2. backend: https://robust-muse-443819-r2.uc.r.appspot.com/users
