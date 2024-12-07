@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 
 # Enable CORS for the frontend URL
-CORS(app, origins=["https://my-frontend-bucket.storage.googleapis.com"])
+CORS(app, origins=["http://frontend-bucket-xyztr.storage.googleapis.com"])
 
 # Connect to MySQL Database
 def get_db_connection():

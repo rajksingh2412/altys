@@ -109,7 +109,6 @@
         <h2>Users List</h2>
         <ul id="usersList"></ul>
     </div>
->>>>>>> 4581c45 (updated working terraform and shell)
 
     <script>
         document.getElementById('createUserForm').addEventListener('submit', function (e) {
@@ -119,7 +118,7 @@
             const email = document.getElementById('email').value;
             
 
-            fetch('BACKEND_URL_PLACEHOLDER/users', {
+            fetch('https://robust-muse-443819-r2.uc.r.appspot.com/users', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -133,7 +132,7 @@
         });
 
         function loadUsers() {
-            fetch('BACKEND_URL_PLACEHOLDER/users')
+            fetch('https://robust-muse-443819-r2.uc.r.appspot.com/users')
                 .then(response => response.json())
                 .then(users => {
                     const usersList = document.getElementById('usersList');

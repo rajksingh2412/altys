@@ -2,7 +2,7 @@
 provider "google" {
   project = var.project_id
   region  = var.region
-  credentials = file("../delta-wonder-443918-h2-d14114f4e354.json")
+  credentials = file("../service-account.json")
 }
 
 terraform {
@@ -76,24 +76,25 @@ provider "mysql" {
 }
 
 # Creating a table
-resource "mysql_database" "database1" {
-  name = google_sql_database.database1.name
-}
+#resource "mysql_database" "database1" {
+#  name = google_sql_database.database1.name
+#  depends_on = [google_sql_database_instance.mysql_instance]
+#}
 
 resource "null_resource" "create_table" {
   provisioner "local-exec" {
     command = <<EOT
-    mysql -h ${google_sql_database_instance.mysql_instance.ip_address} -u ${var.db_user} -p${var.db_password} -e "CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100));"
+    mysql -h ${google_sql_database_instance.mysql_instance.ip_address[0].ip_address} -u ${var.db_user} -p${var.db_password} -D${var.db_name} -e "CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100));"
     EOT
   }
 
-  depends_on = [mysql_database.database1]
+depends_on = [google_sql_database_instance.mysql_instance]
 }
 
 
 # Cloud Storage bucket for frontend
 resource "google_storage_bucket" "frontend_bucket" {
-  name     = "my-frontend-bucket"
+  name     = "frontend-bucket-xyztr"
   location = "US"
 
   website {
@@ -148,7 +149,7 @@ resource "google_app_engine_application" "default" {
 }
 
 resource "google_app_engine_flexible_app_version" "backend_app" {
-  service     = "backend"
+  service     = "default"
   version_id  = "v1"
   runtime     = "custom"  # Using custom Docker runtime
 

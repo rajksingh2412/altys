@@ -4,17 +4,17 @@
 set -e
 
 # GCP Project ID and other environment variables
-PROJECT_ID="delta-wonder-443918-h2"
+PROJECT_ID="robust-muse-443819-r2"
 REGION="us-central1"
 DB_HOST="my-sql-instance.us-central1.c.project-id.internal"
 DB_USER="root"
 DB_PASSWORD="your-password"
 DB_NAME="users"
-CLOUD_STORAGE_BUCKET_NAME="my-frontend-bucket"
+CLOUD_STORAGE_BUCKET_NAME="frontend-bucket-xyztr"
 
 # Step 1: Authenticate with Google Cloud
 echo "Authenticating with Google Cloud..."
-gcloud auth activate-service-account --key-file="./delta-wonder-443918-h2-d14114f4e354.json"
+gcloud auth activate-service-account --key-file="./service-account.json"
 gcloud config set project $PROJECT_ID
 gcloud config set compute/region $REGION
 
@@ -30,16 +30,16 @@ db_name    = "$DB_NAME"
 EOL
 
 ### create gcr repo 
-# gcloud artifacts repositories create my-backend-repo --repository-format=docker --location=us-central1
+#gcloud artifacts repositories create my-backend-repo --repository-format=docker --location=us-central1
 # Step 3: Build the Backend Docker Image
-# echo "Building Docker image for the backend..."
-# docker buildx  build --platform linux/amd64 -t gcr.io/$PROJECT_ID/my-backend-image -f backend/Dockerfile .
+echo "Building Docker image for the backend..."
+docker buildx  build --platform linux/amd64 -t gcr.io/$PROJECT_ID/my-backend-image -f backend/Dockerfile .
 
-# gcloud auth configure-docker 
+gcloud auth configure-docker 
 # # us-central1-docker.pkg.dev
 # # Step 4: Push the Docker Image to Google Container Registry
-# echo "Pushing Docker image to Google Container Registry..."
-# docker push gcr.io/$PROJECT_ID/my-backend-image
+echo "Pushing Docker image to Google Container Registry..."
+docker push gcr.io/$PROJECT_ID/my-backend-image
 
 # Step 5: Deploy the Backend to Google App Engine
 # echo "Deploying backend to Google App Engine..."
@@ -56,7 +56,7 @@ terraform apply -var-file="../test.tfvars"
 
 BACKEND_URL=$(terraform output -raw backend_url)
 cd ..
-sed -i '' "s|BACKEND_URL_PLACEHOLDER|$BACKEND_URL|g" index.html
+sed -i  "s|BACKEND_URL_PLACEHOLDER|$BACKEND_URL|g" index.html
 # # Step 6: Deploy the Frontend to Google Cloud Storage
 echo "Deploying frontend to Google Cloud Storage..."
 
