@@ -8,7 +8,7 @@ Steps to execute:
 2. command to run
 ```
   bash shell.sh
-
+```
 This will create image and deploy
 backend: App engine
 frontend: static on gcs bucket
