@@ -69,7 +69,7 @@ provider "mysql" {
   endpoint = google_sql_database_instance.mysql_instance.ip_address[0].ip_address
   username = google_sql_user.mysql_user.name
   password = google_sql_user.mysql_user.password
-  database = google_sql_database.database1.name
+
 }
 
 # Creating a table
@@ -77,20 +77,15 @@ resource "mysql_database" "database1" {
   name = google_sql_database.database1.name
 }
 
-resource "mysql_table" "users_table" {
-  name      = "users"
-  database  = mysql_database.database1.name
-  provider  = mysql
-
-  columns = {
-    id    = "INT AUTO_INCREMENT PRIMARY KEY"
-    name  = "VARCHAR(255)"
-    email = "VARCHAR(255)"
+resource "null_resource" "create_table" {
+  provisioner "local-exec" {
+    command = <<EOT
+    mysql -h ${google_sql_database_instance.mysql_instance.ip_address} -u ${var.db_user} -p${var.db_password} -e "CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100));"
+    EOT
   }
+
+  depends_on = [mysql_database.database1]
 }
-
-
-
 
 
 # Cloud Storage bucket for frontend
@@ -150,7 +145,7 @@ resource "google_app_engine_application" "default" {
 }
 
 resource "google_app_engine_flexible_app_version" "backend_app" {
-  service     = "default"
+  service     = "backend"
   version_id  = "v1"
   runtime     = "custom"  # Using custom Docker runtime
 
@@ -185,14 +180,6 @@ resource "google_app_engine_flexible_app_version" "backend_app" {
     instances = 1  # Number of instances to run
   }
 }
-
-# Artifact Registry repository for Docker images
-# resource "google_artifact_registry_repository" "my_backend_repo" {
-#   repository_id = "my-backend-repo"
-#   location      = "us-central1"
-#   format        = "DOCKER"
-#   project       = var.project_id
-# }
 
 output "frontend_url" {
   value = google_storage_bucket.frontend_bucket.website[0].main_page_suffix
