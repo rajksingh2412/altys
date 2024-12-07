@@ -75,6 +75,11 @@ provider "mysql" {
 
 }
 
+# Creating a table
+resource "mysql_database" "database1" {
+  name = google_sql_database.database1.name
+}
+
 resource "null_resource" "create_table" {
   provisioner "local-exec" {
     command = <<EOT
